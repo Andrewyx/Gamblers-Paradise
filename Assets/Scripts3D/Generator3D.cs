@@ -34,6 +34,12 @@ public class Generator3D : MonoBehaviour {
     Vector3Int roomMaxSize;
     [SerializeField]
     GameObject cubePrefab;
+    [SerializeField] 
+    private GameObject stairPrefab;
+
+    [SerializeField] 
+    private GameObject tallStairPrefab;
+    
     [SerializeField]
     Material redMaterial;
     [SerializeField]
@@ -204,22 +210,71 @@ public class Generator3D : MonoBehaviour {
                         var prev = path[i - 1];
 
                         var delta = current - prev;
-
-                        if (delta.y != 0) {
-                            int xDir = Mathf.Clamp(delta.x, -1, 1);
-                            int zDir = Mathf.Clamp(delta.z, -1, 1);
-                            Vector3Int verticalOffset = new Vector3Int(0, delta.y, 0);
-                            Vector3Int horizontalOffset = new Vector3Int(xDir, 0, zDir);
-                            
+                        int xDir = Mathf.Clamp(delta.x, -1, 1);
+                        int zDir = Mathf.Clamp(delta.z, -1, 1);
+                        Vector3Int verticalOffset = new Vector3Int(0, delta.y, 0);
+                        Vector3Int horizontalOffset = new Vector3Int(xDir, 0, zDir);
+                        Vector3 rot = new Vector3();
+                        
+                        
+                        if (delta.y > 0) {
                             grid[prev + horizontalOffset] = CellType.Stairs;
-                            grid[prev + horizontalOffset * 2] = CellType.Stairs;
-                            grid[prev + verticalOffset + horizontalOffset] = CellType.Stairs;
+                            grid[prev + horizontalOffset * 2] = CellType.None;
+                            grid[prev + verticalOffset + horizontalOffset] = CellType.None;
                             grid[prev + verticalOffset + horizontalOffset * 2] = CellType.Stairs;
 
-                            PlaceStairs(prev + horizontalOffset);
-                            PlaceStairs(prev + horizontalOffset * 2);
-                            PlaceStairs(prev + verticalOffset + horizontalOffset);
-                            PlaceStairs(prev + verticalOffset + horizontalOffset * 2);
+                            if (delta.x > 0)
+                            {
+                                rot.y = -90;
+                            }
+                            else if (delta.x < 0)
+                            {
+                                rot.y = 90;
+                            }
+                        
+                            if (delta.z > 0)
+                            {
+                                rot.y = 180;
+                            }
+                            else if (delta.z < 0)
+                            {
+                                rot.y = 0;
+                            }
+                            
+                            PlaceStairs(prev + horizontalOffset, prev + horizontalOffset * 2, rot);
+                            // PlaceTallStairs(prev + horizontalOffset * 2);
+                            // PlaceStairs(prev + verticalOffset + horizontalOffset);
+                            // PlaceStairs(prev + verticalOffset + horizontalOffset * 2);
+                        }
+                        else if (delta.y < 0)
+                        {
+                            grid[prev + horizontalOffset] = CellType.None;
+                            grid[prev + horizontalOffset * 2] = CellType.Stairs;
+                            grid[prev + verticalOffset + horizontalOffset] = CellType.Stairs;
+                            grid[prev + verticalOffset + horizontalOffset * 2] = CellType.None;
+                            
+                            if (delta.x > 0)
+                            {
+                                rot.y = 90;
+                            }
+                            else if (delta.x < 0)
+                            {
+                                rot.y = -90;
+                            }
+                        
+                            if (delta.z > 0)
+                            {
+                                rot.y = 0;
+                            }
+                            else if (delta.z < 0)
+                            {
+                                rot.y = 180;
+                            }
+                            
+                            // PlaceStairs(prev + horizontalOffset);
+                            // PlaceTallStairs(prev + horizontalOffset * 2);                            
+                            // PlaceTallStairs(prev + verticalOffset + horizontalOffset);
+                            PlaceStairs(prev + verticalOffset + horizontalOffset * 2, prev + verticalOffset + horizontalOffset, rot);
                         }
 
                         Debug.DrawLine(prev + new Vector3(0.5f, 0.5f, 0.5f), current + new Vector3(0.5f, 0.5f, 0.5f), Color.blue, 100, false);
@@ -237,8 +292,9 @@ public class Generator3D : MonoBehaviour {
 
     void PlaceCube(Vector3Int location, Vector3Int size, Material material) {
         GameObject go = Instantiate(cubePrefab, location, Quaternion.identity);
-        go.GetComponent<Transform>().localScale = size;
-        go.GetComponent<MeshRenderer>().material = material;
+        Vector3 tmp = (Vector3)size;
+        go.GetComponent<Transform>().localScale = new Vector3(tmp.x /4, tmp.y / 4, tmp.z / 4); 
+        // go.GetComponent<MeshRenderer>().material = material;
     }
 
     void PlaceRoom(Vector3Int location, Vector3Int size) {
@@ -249,7 +305,19 @@ public class Generator3D : MonoBehaviour {
         PlaceCube(location, new Vector3Int(1, 1, 1), blueMaterial);
     }
 
-    void PlaceStairs(Vector3Int location) {
-        PlaceCube(location, new Vector3Int(1, 1, 1), greenMaterial);
-    }
+    void PlaceStairs(Vector3Int location1, Vector3Int location2, Vector3 rotation) {
+        // PlaceCube(location, new Vector3Int(1, 1, 1), greenMaterial);
+        GameObject go1 = Instantiate(stairPrefab, location1, Quaternion.identity);
+        Vector3 tmp1 = new Vector3(1, 1, 1);
+        Transform transform1 = go1.GetComponent<Transform>();
+        transform1.localScale = new Vector3(tmp1.x /4, tmp1.y / 5, tmp1.z / 4); 
+        transform1.Rotate(rotation);
+    
+        GameObject go2 = Instantiate(tallStairPrefab, location2, Quaternion.identity);
+        Transform transform2 = go2.GetComponent<Transform>();
+        Vector3 tmp2 = new Vector3(1, 1, 1);
+        transform2.localScale = new Vector3(tmp2.x /4, tmp2.y / 5, tmp2.z / 4); 
+        transform2.Rotate(rotation);
+    }    
+
 }
