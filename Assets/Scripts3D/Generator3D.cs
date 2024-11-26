@@ -62,7 +62,9 @@ public class Generator3D : MonoBehaviour {
         PathfindHallways();
     }
 
-    void PlaceRooms() {
+    void PlaceRooms()
+    {
+        bool startPlaced = false;
         for (int i = 0; i < roomCount; i++) {
             Vector3Int location = new Vector3Int(
                 random.Next(0, size.x),
@@ -93,7 +95,16 @@ public class Generator3D : MonoBehaviour {
                 add = false;
             }
 
-            if (add) {
+            if (add && !startPlaced)
+            {
+                PlaceStartRoom(newRoom.bounds.position,newRoom.bounds.size);
+                foreach (var pos in newRoom.bounds.allPositionsWithin) {
+                    grid[pos] = CellType.Room;
+                }
+                rooms.Add(newRoom);
+                startPlaced = true;
+            }
+            else if (add) {
                 rooms.Add(newRoom);
                 PlaceRoom(newRoom.bounds.position, newRoom.bounds.size);
 
@@ -268,7 +279,7 @@ public class Generator3D : MonoBehaviour {
                             PlaceStairs(prev + verticalOffset + horizontalOffset * 2, prev + verticalOffset + horizontalOffset, rot);
                         }
 
-                        Debug.DrawLine(prev + new Vector3(0.5f, 0.5f, 0.5f), current + new Vector3(0.5f, 0.5f, 0.5f), Color.blue, 1000, false);
+                        Debug.DrawLine(prev, current, Color.blue, 1000, false);
                     }
                 }
 
@@ -281,19 +292,19 @@ public class Generator3D : MonoBehaviour {
         }
     }
 
-    void PlaceCube(Vector3Int location, Vector3Int size, Material material) {
-        GameObject go = Instantiate(cubePrefab, location, Quaternion.identity);
-        go.GetComponent<Transform>().localScale = size;
-        // go.GetComponent<MeshRenderer>().material = material;
+    void PlaceStartRoom(Vector3Int location, Vector3Int size)
+    {
+        GameObject go = Instantiate(spawnPrefab, (Vector3)location + new Vector3((size.x-1)/2f,0 ,(size.z-1)/2f), Quaternion.identity);
+        go.GetComponent<Transform>().localScale = size;  
     }
-
     void PlaceRoom(Vector3Int location, Vector3Int size) {
         GameObject go = Instantiate(cubePrefab, (Vector3)location + new Vector3((size.x-1)/2f,0 ,(size.z-1)/2f), Quaternion.identity);
         go.GetComponent<Transform>().localScale = size;
     }
 
     void PlaceHallway(Vector3Int location) {
-        PlaceCube(location, new Vector3Int(1, 1, 1), blueMaterial);
+        GameObject go = Instantiate(cubePrefab, location, Quaternion.identity);
+        go.GetComponent<Transform>().localScale = new Vector3Int(1, 1, 1);
     }
 
     void PlaceStairs(Vector3Int location1, Vector3Int location2, Vector3 rotation) {
