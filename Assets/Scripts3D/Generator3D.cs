@@ -34,11 +34,9 @@ public class Generator3D : MonoBehaviour {
     Vector3Int roomMaxSize;
     [SerializeField]
     GameObject cubePrefab;
-    [SerializeField] 
-    private GameObject stairPrefab;
-
-    [SerializeField] 
-    private GameObject tallStairPrefab;
+    [SerializeField] private GameObject stairPrefab;
+    [SerializeField] private GameObject tallStairPrefab;
+    [SerializeField] private GameObject spawnPrefab;
     
     [SerializeField]
     Material redMaterial;
@@ -213,9 +211,8 @@ public class Generator3D : MonoBehaviour {
                         int xDir = Mathf.Clamp(delta.x, -1, 1);
                         int zDir = Mathf.Clamp(delta.z, -1, 1);
                         Vector3Int verticalOffset = new Vector3Int(0, delta.y, 0);
-                        Vector3Int horizontalOffset = new Vector3Int(xDir, 0, zDir);
                         Vector3 rot = new Vector3();
-                        
+                        Vector3Int horizontalOffset = new Vector3Int(xDir, 0, zDir);
                         
                         if (delta.y > 0) {
                             grid[prev + horizontalOffset] = CellType.Stairs;
@@ -242,9 +239,6 @@ public class Generator3D : MonoBehaviour {
                             }
                             
                             PlaceStairs(prev + horizontalOffset, prev + horizontalOffset * 2, rot);
-                            // PlaceTallStairs(prev + horizontalOffset * 2);
-                            // PlaceStairs(prev + verticalOffset + horizontalOffset);
-                            // PlaceStairs(prev + verticalOffset + horizontalOffset * 2);
                         }
                         else if (delta.y < 0)
                         {
@@ -271,13 +265,10 @@ public class Generator3D : MonoBehaviour {
                                 rot.y = 180;
                             }
                             
-                            // PlaceStairs(prev + horizontalOffset);
-                            // PlaceTallStairs(prev + horizontalOffset * 2);                            
-                            // PlaceTallStairs(prev + verticalOffset + horizontalOffset);
                             PlaceStairs(prev + verticalOffset + horizontalOffset * 2, prev + verticalOffset + horizontalOffset, rot);
                         }
 
-                        Debug.DrawLine(prev + new Vector3(0.5f, 0.5f, 0.5f), current + new Vector3(0.5f, 0.5f, 0.5f), Color.blue, 100, false);
+                        Debug.DrawLine(prev + new Vector3(0.5f, 0.5f, 0.5f), current + new Vector3(0.5f, 0.5f, 0.5f), Color.blue, 1000, false);
                     }
                 }
 
@@ -292,13 +283,13 @@ public class Generator3D : MonoBehaviour {
 
     void PlaceCube(Vector3Int location, Vector3Int size, Material material) {
         GameObject go = Instantiate(cubePrefab, location, Quaternion.identity);
-        Vector3 tmp = (Vector3)size;
-        go.GetComponent<Transform>().localScale = new Vector3(tmp.x /4, tmp.y / 4, tmp.z / 4); 
+        go.GetComponent<Transform>().localScale = size;
         // go.GetComponent<MeshRenderer>().material = material;
     }
 
     void PlaceRoom(Vector3Int location, Vector3Int size) {
-        PlaceCube(location, size, redMaterial);
+        GameObject go = Instantiate(cubePrefab, (Vector3)location + new Vector3((size.x-1)/2f,0 ,(size.z-1)/2f), Quaternion.identity);
+        go.GetComponent<Transform>().localScale = size;
     }
 
     void PlaceHallway(Vector3Int location) {
@@ -306,17 +297,12 @@ public class Generator3D : MonoBehaviour {
     }
 
     void PlaceStairs(Vector3Int location1, Vector3Int location2, Vector3 rotation) {
-        // PlaceCube(location, new Vector3Int(1, 1, 1), greenMaterial);
         GameObject go1 = Instantiate(stairPrefab, location1, Quaternion.identity);
-        Vector3 tmp1 = new Vector3(1, 1, 1);
         Transform transform1 = go1.GetComponent<Transform>();
-        transform1.localScale = new Vector3(tmp1.x /4, tmp1.y / 5, tmp1.z / 4); 
         transform1.Rotate(rotation);
     
         GameObject go2 = Instantiate(tallStairPrefab, location2, Quaternion.identity);
         Transform transform2 = go2.GetComponent<Transform>();
-        Vector3 tmp2 = new Vector3(1, 1, 1);
-        transform2.localScale = new Vector3(tmp2.x /4, tmp2.y / 5, tmp2.z / 4); 
         transform2.Rotate(rotation);
     }    
 
