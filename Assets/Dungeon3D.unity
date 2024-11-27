@@ -401,7 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: {x: 30, y: 5, z: 30}
   roomCount: 20
-  roomMaxSize: {x: 4, y: 1, z: 4}
+  roomMaxSize: {x: 10, y: 2, z: 10}
   cubePrefab: {fileID: 2077910481361629587, guid: d5849595d4bb00c408f3fb875a0694d7,
     type: 3}
   stairPrefab: {fileID: 945424527441840107, guid: 2a6d200982a9271478ecb8ffde78c2ae,
@@ -409,6 +409,8 @@ MonoBehaviour:
   tallStairPrefab: {fileID: 5555379588071380312, guid: 593d076d666a6a04694ec4f31d1e61a2,
     type: 3}
   spawnPrefab: {fileID: 8519953464404219380, guid: f82791f73140cc6409b0a641a57b12ad,
+    type: 3}
+  playerPrefab: {fileID: 4459864850019384750, guid: f1631ffe63882824eb82fffdd11844d7,
     type: 3}
   redMaterial: {fileID: 2100000, guid: 71673d9873285904ab00282788add27f, type: 2}
   blueMaterial: {fileID: 2100000, guid: bd79999920190574a94044b2acad7316, type: 2}
@@ -457,7 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fd63d7ca03dc8447bb007f7820c0060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotateSpeed: 30
+  rotateSpeed: 0
 --- !u!4 &1515053885
 Transform:
   m_ObjectHideFlags: 0

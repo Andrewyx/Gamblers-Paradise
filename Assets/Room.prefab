@@ -96,7 +96,11 @@ PrefabInstance:
       value: Dungeon_Custom_Center
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 6584724465410976023, guid: 8787348c67aeb1445bc5e15a7c3f71fb, type: 3}
+    - {fileID: 9040365787792984099, guid: 8787348c67aeb1445bc5e15a7c3f71fb, type: 3}
+    - {fileID: 2960970382007680800, guid: 8787348c67aeb1445bc5e15a7c3f71fb, type: 3}
+    - {fileID: 3357602584889597916, guid: 8787348c67aeb1445bc5e15a7c3f71fb, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8787348c67aeb1445bc5e15a7c3f71fb, type: 3}

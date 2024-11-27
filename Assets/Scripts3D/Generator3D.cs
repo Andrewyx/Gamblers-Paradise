@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = System.Random;
@@ -37,6 +38,7 @@ public class Generator3D : MonoBehaviour {
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private GameObject tallStairPrefab;
     [SerializeField] private GameObject spawnPrefab;
+    [SerializeField] private GameObject playerPrefab;
     
     [SerializeField]
     Material redMaterial;
@@ -227,8 +229,8 @@ public class Generator3D : MonoBehaviour {
                         
                         if (delta.y > 0) {
                             grid[prev + horizontalOffset] = CellType.Stairs;
-                            grid[prev + horizontalOffset * 2] = CellType.None;
-                            grid[prev + verticalOffset + horizontalOffset] = CellType.None;
+                            grid[prev + horizontalOffset * 2] = CellType.Stairs;
+                            grid[prev + verticalOffset + horizontalOffset] = CellType.Stairs;
                             grid[prev + verticalOffset + horizontalOffset * 2] = CellType.Stairs;
 
                             if (delta.x > 0)
@@ -253,10 +255,10 @@ public class Generator3D : MonoBehaviour {
                         }
                         else if (delta.y < 0)
                         {
-                            grid[prev + horizontalOffset] = CellType.None;
+                            grid[prev + horizontalOffset] = CellType.Stairs;
                             grid[prev + horizontalOffset * 2] = CellType.Stairs;
                             grid[prev + verticalOffset + horizontalOffset] = CellType.Stairs;
-                            grid[prev + verticalOffset + horizontalOffset * 2] = CellType.None;
+                            grid[prev + verticalOffset + horizontalOffset * 2] = CellType.Stairs;
                             
                             if (delta.x > 0)
                             {
@@ -292,13 +294,17 @@ public class Generator3D : MonoBehaviour {
         }
     }
 
-    void PlaceStartRoom(Vector3Int location, Vector3Int size)
+    void PlaceStartRoom(Vector3Int locationInt, Vector3Int size)
     {
-        GameObject go = Instantiate(spawnPrefab, (Vector3)location + new Vector3((size.x-1)/2f,0 ,(size.z-1)/2f), Quaternion.identity);
-        go.GetComponent<Transform>().localScale = size;  
+        Vector3 location = (Vector3)locationInt + new Vector3((size.x - 1) / 2f, Mathf.Floor(size.y/2f), (size.z - 1) / 2f);
+        GameObject go = Instantiate(spawnPrefab, location, Quaternion.identity);
+        go.GetComponent<Transform>().localScale = size;
+        GameObject p = Instantiate(playerPrefab, location + Vector3.up/4, Quaternion.identity);
+        p.GetComponent<Transform>().localScale = p.GetComponent<Transform>().localScale/5;
     }
-    void PlaceRoom(Vector3Int location, Vector3Int size) {
-        GameObject go = Instantiate(cubePrefab, (Vector3)location + new Vector3((size.x-1)/2f,0 ,(size.z-1)/2f), Quaternion.identity);
+    void PlaceRoom(Vector3Int locationInt, Vector3Int size) {
+        Vector3 location = (Vector3)locationInt + new Vector3((size.x - 1) / 2f, Mathf.Floor(size.y/2f), (size.z - 1) / 2f);
+        GameObject go = Instantiate(cubePrefab, (Vector3)location, Quaternion.identity);
         go.GetComponent<Transform>().localScale = size;
     }
 
