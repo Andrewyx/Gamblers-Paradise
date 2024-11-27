@@ -1,19 +1,11 @@
 using UnityEngine;
 
-public class Room : MonoBehaviour
+public class Room : Cell
 {
-    public enum CellType {
-        None,
-        Room,
-        Hallway,
-        Stairs
-    }
     public BoundsInt bounds;
-    public CellType type;
     
-    public Room(Vector3Int location, Vector3Int size, CellType cellType) {
+    public Room(Vector3Int location, Vector3Int size) : base(location, size, CellType.Room) {
         bounds = new BoundsInt(location, size);
-        type = cellType;
     }
 
     public static bool Intersect(Room a, Room b) {
@@ -21,4 +13,5 @@ public class Room : MonoBehaviour
             || (a.bounds.position.y >= (b.bounds.position.y + b.bounds.size.y)) || ((a.bounds.position.y + a.bounds.size.y) <= b.bounds.position.y)
             || (a.bounds.position.z >= (b.bounds.position.z + b.bounds.size.z)) || ((a.bounds.position.z + a.bounds.size.z) <= b.bounds.position.z));
     }
+
 }
