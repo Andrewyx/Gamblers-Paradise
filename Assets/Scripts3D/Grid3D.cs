@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class Grid3D<T> {
+public class Grid3D<T> : IEnumerable<T> {
     T[] data;
 
     public Vector3Int Size { get; private set; }
@@ -41,5 +42,22 @@ public class Grid3D<T> {
             pos += Offset;
             data[GetIndex(pos)] = value;
         }
+    }
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return data.GetEnumerator();
+    }
+    
+    public IEnumerator<T> GetEnumerator()
+    {
+        foreach(var item in data)
+        {
+            yield return item;
+        }
+    }
+
+    public int Length()
+    {
+        return data.Length;
     }
 }

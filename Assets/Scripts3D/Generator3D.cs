@@ -15,9 +15,11 @@ public class Generator3D : MonoBehaviour {
 
     class Room {
         public BoundsInt bounds;
+        public Vector3Int location;
 
         public Room(Vector3Int location, Vector3Int size) {
             bounds = new BoundsInt(location, size);
+            this.location = location;
         }
 
         public static bool Intersect(Room a, Room b) {
@@ -39,6 +41,7 @@ public class Generator3D : MonoBehaviour {
     [SerializeField] private GameObject tallStairPrefab;
     [SerializeField] private GameObject spawnPrefab;
     [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private GameObject wallPrefab;
     
     [SerializeField]
     Material redMaterial;
@@ -62,6 +65,7 @@ public class Generator3D : MonoBehaviour {
         Triangulate();
         CreateHallways();
         PathfindHallways();
+        PlaceWalls();
     }
 
     void PlaceRooms()
@@ -321,6 +325,10 @@ public class Generator3D : MonoBehaviour {
         GameObject go2 = Instantiate(tallStairPrefab, location2, Quaternion.identity);
         Transform transform2 = go2.GetComponent<Transform>();
         transform2.Rotate(rotation);
-    }    
+    }
 
+    void PlaceWalls()
+    {
+        
+    }
 }
