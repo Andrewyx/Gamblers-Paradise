@@ -56,6 +56,7 @@ public class Grid3D<T> : IEnumerable<T> {
     public bool HasItemAt(Vector3Int pos)
     {
         pos += Offset;
+        if (GetIndex(pos) >= data.Length || GetIndex(pos) < 0) return false; 
         return data[GetIndex(pos)] != null;
     }
     IEnumerator IEnumerable.GetEnumerator()

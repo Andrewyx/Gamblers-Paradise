@@ -2,9 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 public class Cell
 {
-    public bool North, East, South, West;
+    public bool PosX, PosZ, NegX, NegZ;
 
-    public List<bool> walls;
     public CellType cellType;
     public Vector3Int location;
     public Vector3Int size;
@@ -13,10 +12,21 @@ public class Cell
         this.cellType = cellType;
         this.location = location;
         this.size = size;
-        North = true;
-        East = true;
-        West = true;
-        South = true;
-        walls = new List<bool> {North, East, South, West};
+        PosX = true;
+        PosZ = true;
+        NegX = true;
+        NegZ = true;
     }
+    
+    // public void RenderWalls()
+    // {
+    //     if (PosX) RenderPosXWall();
+    //     // if (NegX) ;
+    //     // if (PosZ) ;
+    //     // if (NegZ) ;
+    // }
+    // private void RenderPosXWall()
+    // {
+    //     
+    // }
 }

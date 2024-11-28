@@ -15,11 +15,15 @@ public class Generator3D : MonoBehaviour {
     Vector3Int roomMaxSize;
     [SerializeField]
     GameObject cubePrefab;
+
+    [SerializeField] private Mesh roomFloorMesh;
     [SerializeField] private GameObject stairPrefab;
     [SerializeField] private GameObject tallStairPrefab;
     [SerializeField] private GameObject spawnPrefab;
     [SerializeField] private GameObject playerPrefab;
     [SerializeField] private GameObject wallPrefab;
+    [SerializeField] private GameObject roofPrefab;
+    [SerializeField] private GameObject floorPrefab;
     
     [SerializeField]
     Material redMaterial;
@@ -199,7 +203,7 @@ public class Generator3D : MonoBehaviour {
                     var current = path[i];
 
                     if (grid[current].cellType == CellType.None) {
-                        grid[current].cellType = CellType.Hallway;
+                        grid[current] = new Hallway(current, new Vector3Int(1, 1, 1));
                     }
 
                     if (i > 0) {
@@ -289,9 +293,23 @@ public class Generator3D : MonoBehaviour {
         p.GetComponent<Transform>().localScale = p.GetComponent<Transform>().localScale/5;
     }
     void PlaceRoom(Vector3Int locationInt, Vector3Int size) {
-        Vector3 location = (Vector3)locationInt + new Vector3((size.x - 1) / 2f, Mathf.Floor(size.y/2f), (size.z - 1) / 2f);
-        GameObject go = Instantiate(cubePrefab, (Vector3)location, Quaternion.identity);
-        go.GetComponent<Transform>().localScale = size;
+        int floorCountX = Mathf.Max(1, size.x);
+        int floorCountZ = Mathf.Max(1, size.z);
+        int heighCountY = Mathf.Max(1, size.y);
+        
+        for (int x = 0; x < floorCountX; x++)
+        {
+            for (int z = 0; z < floorCountZ; z++)
+            {
+                Vector3Int location = locationInt + new Vector3Int(x, (int)(size.y / 2f), z);
+                Instantiate(floorPrefab, location, Quaternion.identity);
+                 
+                 for (int y = 0; y < heighCountY; y++)
+                 {
+                     // grid[location + Vector3Int.up * y].cellType = CellType.Room;
+                 }  
+            }
+        }
     }
 
     void PlaceHallway(Vector3Int location) {
@@ -308,9 +326,66 @@ public class Generator3D : MonoBehaviour {
         Transform transform2 = go2.GetComponent<Transform>();
         transform2.Rotate(rotation);
     }
-
     void PlaceWalls()
     {
-        
+        foreach (var cell in grid)
+        {
+            if (cell.cellType == CellType.Hallway || cell.cellType == CellType.Stairs)
+            {
+                Vector3Int location = cell.location;
+                bool hasPosXNeighbor = true;
+                bool hasNegXNeighbor = true;
+                bool hasPosZNeighbor = true;
+                bool hasNegZNeighbor = true;
+                bool hasPosYNeighbor = true;
+                if (grid.HasItemAt(location + Vector3Int.right))
+                    hasPosXNeighbor = grid[location + Vector3Int.right].cellType == CellType.None;
+                if (grid.HasItemAt(location + Vector3Int.left))
+                    hasNegXNeighbor = grid[location + Vector3Int.left].cellType == CellType.None;
+                if (grid.HasItemAt(location + Vector3Int.forward))
+                    hasPosZNeighbor = grid[location + Vector3Int.forward].cellType == CellType.None;
+                if (grid.HasItemAt(location + Vector3Int.back))
+                    hasNegZNeighbor = grid[location + Vector3Int.back].cellType == CellType.None;
+                if (grid.HasItemAt(location + Vector3Int.up))
+                    hasPosYNeighbor = grid[location + Vector3Int.up].cellType == CellType.None;
+                cell.PosX = hasPosXNeighbor;
+                cell.NegX = hasNegXNeighbor;
+                cell.PosZ = hasPosZNeighbor;
+                cell.NegZ = hasNegZNeighbor;
+                if (hasPosXNeighbor)
+                {
+                    GameObject go = Instantiate(wallPrefab, cell.location, Quaternion.identity);
+                    Transform transform = go.GetComponent<Transform>();
+                    transform.Rotate(new Vector3Int(0, -90, 0));
+                }
+                if (hasNegXNeighbor)
+                {
+                    GameObject go = Instantiate(wallPrefab, cell.location, Quaternion.identity);
+                    Transform transform = go.GetComponent<Transform>();
+                    transform.Rotate(new Vector3Int(0, 90, 0));
+                }
+                if (hasPosZNeighbor)
+                {
+                    GameObject go = Instantiate(wallPrefab, cell.location, Quaternion.identity);
+                    Transform transform = go.GetComponent<Transform>();
+                    transform.Rotate(new Vector3Int(0, 180, 0));
+                }
+                if (hasNegZNeighbor)
+                {
+                    GameObject go = Instantiate(wallPrefab, cell.location, Quaternion.identity);
+                    Transform transform = go.GetComponent<Transform>();
+                    transform.Rotate(new Vector3Int(0, 0, 0));
+                }
+
+                if (hasPosYNeighbor)
+                {
+                    Instantiate(roofPrefab, cell.location, Quaternion.identity);
+                }
+            }
+            else if (cell.cellType == CellType.Room)
+            {
+                
+            }
+        }
     }
 }
