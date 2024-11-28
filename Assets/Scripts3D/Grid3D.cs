@@ -43,6 +43,21 @@ public class Grid3D<T> : IEnumerable<T> {
             data[GetIndex(pos)] = value;
         }
     }
+    
+    public T this[int index] {
+        get {
+            return data[index];
+        }
+        set {
+            data[index] = value;
+        }
+    }
+
+    public bool HasItemAt(Vector3Int pos)
+    {
+        pos += Offset;
+        return data[GetIndex(pos)] != null;
+    }
     IEnumerator IEnumerable.GetEnumerator()
     {
         return data.GetEnumerator();
