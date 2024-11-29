@@ -95,9 +95,9 @@ public class Generator3D : MonoBehaviour {
             {
                 PlaceStartRoom(newRoom.bounds.position,newRoom.bounds.size);
                 foreach (var pos in newRoom.bounds.allPositionsWithin) {
-                    if (pos.y >= newRoom.bounds.center.y)
-                        grid[pos] = newRoom;
+                    grid[pos] = new Room(pos, new Vector3Int(1, 1, 1));
                 }
+                DrawBox(newRoom.bounds.center + Vector3.up * 0.5f, Quaternion.identity, new Vector3(1, 1, 1), Color.yellow);
                 rooms.Add(newRoom);
                 startPlaced = true;
             }
@@ -359,8 +359,8 @@ public class Generator3D : MonoBehaviour {
             if (cell.cellType == CellType.None) continue; 
             if (cell.cellType == CellType.Room)
                 DrawBox(cell.location + Vector3.up * 0.5f, Quaternion.identity, new Vector3(1, 1, 1), Color.red);
-            if (cell.cellType == CellType.Stairs)
-                DrawBox(cell.location + Vector3.up * 0.5f, Quaternion.identity, new Vector3(1, 1, 1), Color.cyan);
+            // if (cell.cellType == CellType.Stairs)
+            //     DrawBox(cell.location + Vector3.up * 0.5f, Quaternion.identity, new Vector3(1, 1, 1), Color.cyan);
 
             Vector3Int location = cell.bounds.position;
             bool hasPosXNeighbor = true;
