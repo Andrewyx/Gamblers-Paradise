@@ -399,9 +399,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b2adc24e688e8841887873ee6b3e08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 30, y: 5, z: 30}
-  roomCount: 300
-  roomMaxSize: {x: 10, y: 10, z: 10}
+  size: {x: 30, y: 10, z: 30}
+  roomCount: 20
+  roomMaxSize: {x: 5, y: 5, z: 5}
   cubePrefab: {fileID: 2077910481361629587, guid: d5849595d4bb00c408f3fb875a0694d7,
     type: 3}
   roomFloorMesh: {fileID: -8569513391688025148, guid: 20f2ea214cfe0d748b1b4b8ad965af69,
@@ -418,7 +418,8 @@ MonoBehaviour:
     type: 3}
   roofPrefab: {fileID: 1938501471569096594, guid: 3542ecbc09659f24e9735b90da45abca,
     type: 3}
-  floorPrefab: {fileID: 0}
+  floorPrefab: {fileID: 1899141840551935773, guid: 2856b02d01f71f442aa278aebdc8e0de,
+    type: 3}
   redMaterial: {fileID: 2100000, guid: 199d53ada6a2bce419cc04159efc68f1, type: 2}
   blueMaterial: {fileID: 2100000, guid: bd79999920190574a94044b2acad7316, type: 2}
   greenMaterial: {fileID: 2100000, guid: 13cd47135277903479d4b55421faa42e, type: 2}

@@ -2,8 +2,6 @@ using UnityEngine;
 
 public class Room : Cell
 {
-    public BoundsInt bounds;
-    
     public Room(Vector3Int location, Vector3Int size) : base(location, size, CellType.Room) {
         bounds = new BoundsInt(location, size);
     }
