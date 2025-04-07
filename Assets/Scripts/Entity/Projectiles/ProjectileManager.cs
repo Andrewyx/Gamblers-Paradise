@@ -14,11 +14,20 @@ namespace Entity.Projectiles
 
         private void Update()
         {
-            foreach (Projectile projectile in _projectiles)
+            for (int i = _projectiles.Count - 1; i >= 0; i--)
             {
+                Projectile projectile = _projectiles[i];
+                Vector3 prevPosition = projectile.projectileTransform.position;
                 projectile.projectileTransform.position += projectile.direction * Time.deltaTime * projectileSpeed;
+                float distance = Vector3.Distance(prevPosition, projectile.projectileTransform.position);
+                projectile.rangeMeters -= distance;
+                if (projectile.rangeMeters <= 0)
+                {
+                    Destroy(projectile.reference);
+                    _projectiles.RemoveAt(i);
+                }
             }
-            
+
             if (!IsOwner) return;
 
             if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -29,7 +38,7 @@ namespace Entity.Projectiles
         {
             Vector3 spawnPosition = projectileOrigin.position;
             Vector3 direction = projectileOrigin.forward;
-            
+
             SpawnProjectileLocal(spawnPosition, direction);
             SpawnProjectile(spawnPosition, direction, TimeManager.Tick);
         }
@@ -37,7 +46,11 @@ namespace Entity.Projectiles
         private void SpawnProjectileLocal(Vector3 spawnPosition, Vector3 direction)
         {
             GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
-            _projectiles.Add(new Projectile() { projectileTransform = projectile.transform, direction = direction });
+            _projectiles.Add(new Projectile()
+            {
+                projectileTransform = projectile.transform, direction = direction, reference = projectile,
+                rangeMeters = projectileRange
+            });
         }
 
         [ServerRpc]
