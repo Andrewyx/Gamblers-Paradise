@@ -1,4 +1,5 @@
-﻿using FishNet.Documenting;
+﻿using System;
+using FishNet.Documenting;
 using FishNet.Object;
 using System.Runtime.CompilerServices;
 using UnityEngine;
@@ -20,7 +21,6 @@ namespace FishNet.Utility.Extension
         /// <summary>
         /// Sets values of TransformProperties to a transforms world properties.
         /// </summary>
-        
         public static TransformProperties GetWorldProperties(this Transform t, TransformProperties offset)
         {
             TransformProperties tp = new(t.position, t.rotation, t.localScale);
@@ -36,7 +36,6 @@ namespace FishNet.Utility.Extension
             TransformPropertiesCls tp = new(t.position, t.rotation, t.localScale);
             return tp;
         }
-
 
         /// <summary>
         /// Sets values of TransformProperties to a transforms world properties.
@@ -56,43 +55,35 @@ namespace FishNet.Utility.Extension
             return tp;
         }
 
-
         /// <summary>
         /// Sets values of TransformPropertiesCls to a transforms world properties.
         /// </summary>
-        public static void SetWorldProperties(this TransformPropertiesCls tp, Transform t)
-        {
-            tp.Position = t.position;
-            tp.Rotation = t.rotation;
-            tp.LocalScale = t.localScale;
-        }
+        [Obsolete("Use TransformPropertiesExtensions.SetWorldProperties.")]
+        public static void SetWorldProperties(this TransformPropertiesCls tp, Transform t) => TransformPropertiesExtensions.SetWorldProperties(tp, t);
 
         /// <summary>
         /// Gets the offset values by subtracting this from target.
         /// </summary>
-        /// <param name="pos">Position offset result.</param>
-        /// <param name="rot">Rotation offset result.</param>
+        /// <param name = "pos">Position offset result.</param>
+        /// <param name = "rot">Rotation offset result.</param>
         public static void SetTransformOffsets(this Transform t, Transform target, ref Vector3 pos, ref Quaternion rot)
         {
             if (target == null)
                 return;
-            pos = (target.position - t.position);
-            rot = (target.rotation * Quaternion.Inverse(t.rotation));
+            pos = target.position - t.position;
+            rot = target.rotation * Quaternion.Inverse(t.rotation);
         }
 
         /// <summary>
         /// Gets the offset values by subtracting this from target.
         /// </summary>
+        /// <param name = "zeroScale">True to set scale to Vector3.zero.</param>
         public static TransformProperties GetTransformOffsets(this Transform t, Transform target)
         {
             if (target == null)
                 return default;
 
-            return new(
-                (target.position - t.position),
-                (target.rotation * Quaternion.Inverse(t.rotation)),
-                (target.localScale - t.localScale)
-                );
+            return new(target.position - t.position, target.rotation * Quaternion.Inverse(t.rotation), target.localScale - t.localScale);
         }
 
         /// <summary>
@@ -112,7 +103,7 @@ namespace FishNet.Utility.Extension
         {
             t.localPosition = tp.Position;
             t.localRotation = tp.Rotation;
-            t.localScale = tp.LocalScale;
+            t.localScale = tp.Scale;
         }
 
         /// <summary>
@@ -124,6 +115,7 @@ namespace FishNet.Utility.Extension
             t.rotation = tp.Rotation;
             t.localScale = tp.LocalScale;
         }
+
         /// <summary>
         /// Sets a transform to world properties.
         /// </summary>
@@ -131,7 +123,7 @@ namespace FishNet.Utility.Extension
         {
             t.position = tp.Position;
             t.rotation = tp.Rotation;
-            t.localScale = tp.LocalScale;
+            t.localScale = tp.Scale;
         }
 
         /// <summary>
@@ -142,6 +134,7 @@ namespace FishNet.Utility.Extension
             t.localPosition = pos;
             t.localRotation = rot;
         }
+
         /// <summary>
         /// Sets local position, rotation, and scale for a transform.
         /// </summary>
@@ -151,6 +144,7 @@ namespace FishNet.Utility.Extension
             t.localRotation = rot;
             t.localScale = scale;
         }
+
         /// <summary>
         /// Sets local position, rotation, and scale using nullables for a transform. If a value is null then that property is skipped.
         /// </summary>
@@ -182,9 +176,9 @@ namespace FishNet.Utility.Extension
         /// </summary>
         public static void OutLocalPropertyValues(this Transform t, Vector3? nullablePos, Quaternion? nullableRot, Vector3? nullableScale, out Vector3 pos, out Quaternion rot, out Vector3 scale)
         {
-            pos = (nullablePos == null) ? t.localPosition : nullablePos.Value;
-            rot = (nullableRot == null) ? t.localRotation : nullableRot.Value;
-            scale = (nullableScale == null) ? t.localScale : nullableScale.Value;
+            pos = nullablePos == null ? t.localPosition : nullablePos.Value;
+            rot = nullableRot == null ? t.localRotation : nullableRot.Value;
+            scale = nullableScale == null ? t.localScale : nullableScale.Value;
         }
 
         /// <summary>
@@ -192,10 +186,9 @@ namespace FishNet.Utility.Extension
         /// </summary>
         public static void OutWorldPropertyValues(this Transform t, Vector3? nullablePos, Quaternion? nullableRot, Vector3? nullableScale, out Vector3 pos, out Quaternion rot, out Vector3 scale)
         {
-            pos = (nullablePos == null) ? t.position : nullablePos.Value;
-            rot = (nullableRot == null) ? t.rotation : nullableRot.Value;
-            scale = (nullableScale == null) ? t.localScale : nullableScale.Value;
+            pos = nullablePos == null ? t.position : nullablePos.Value;
+            rot = nullableRot == null ? t.rotation : nullableRot.Value;
+            scale = nullableScale == null ? t.localScale : nullableScale.Value;
         }
     }
-
 }

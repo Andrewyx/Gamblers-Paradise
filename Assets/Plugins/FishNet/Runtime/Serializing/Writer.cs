@@ -10,6 +10,7 @@ using GameKit.Dependencies.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Text;
 using GameKit.Dependencies.Utilities.Types;
 using UnityEngine;
 
@@ -27,17 +28,14 @@ namespace FishNet.Serializing
         /// Capacity of the buffer.
         /// </summary>
         public int Capacity => _buffer.Length;
-
         /// <summary>
         /// Current write position.
         /// </summary>
         public int Position;
-
         /// <summary>
         /// Number of bytes writen to the buffer.
         /// </summary>
         public int Length;
-
         /// <summary>
         /// NetworkManager associated with this writer. May be null.
         /// </summary>
@@ -56,27 +54,22 @@ namespace FishNet.Serializing
         /// Replicate data is default of T.
         /// </summary>
         internal const byte REPLICATE_DEFAULT_BYTE = 0;
-
         /// <summary>
         /// Replicate data is the same as the previous.
         /// </summary>
         internal const byte REPLICATE_DUPLICATE_BYTE = 1;
-
         /// <summary>
         /// Replicate data is different from the previous.
         /// </summary>
         internal const byte REPLICATE_UNIQUE_BYTE = 2;
-
         /// <summary>
         /// Replicate data is repeating for every entry.
         /// </summary>
         internal const byte REPLICATE_REPEATING_BYTE = 3;
-
         /// <summary>
         /// All datas in the replicate are default.
         /// </summary>
         internal const byte REPLICATE_ALL_DEFAULT_BYTE = 4;
-
         /// <summary>
         /// Value used when a collection is unset, as in null.
         /// </summary>
@@ -98,43 +91,31 @@ namespace FishNet.Serializing
             return $"Position: {Position:0000}, Length: {Length:0000}, Buffer: {BitConverter.ToString(_buffer, offset, length)}.";
         }
 
+        [Obsolete("Use Clear(NetworkManager) instead.")]
+        public void Reset(NetworkManager newManager = null) => Clear(newManager);
+
         /// <summary>
-        /// Resets the writer as though it was unused. Does not reset buffers.
+        /// Resets written data.
         /// </summary>
-        public void Reset(NetworkManager manager = null)
+        public void Clear()
         {
             Length = 0;
             Position = 0;
-            NetworkManager = manager;
         }
 
         /// <summary>
-        /// Writes a dictionary.
+        /// Resets written data and sets the NetworkManager.
         /// </summary>
-        public void WriteDictionary<TKey, TValue>(Dictionary<TKey, TValue> dict)
+        public void Clear(NetworkManager newManager)
         {
-            if (dict == null)
-            {
-                WriteBoolean(true);
-                return;
-            }
-            else
-            {
-                WriteBoolean(false);
-            }
-
-            WriteInt32(dict.Count);
-            foreach (KeyValuePair<TKey, TValue> item in dict)
-            {
-                Write(item.Key);
-                Write(item.Value);
-            }
+            Clear();
+            NetworkManager = newManager;
         }
 
         /// <summary>
         /// Ensures the buffer Capacity is of minimum count.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name = "count"></param>
         public void EnsureBufferCapacity(int count)
         {
             if (Capacity < count)
@@ -144,12 +125,12 @@ namespace FishNet.Serializing
         /// <summary>
         /// Ensure a number of bytes to be available in the buffer from current position.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name = "count"></param>
         public void EnsureBufferLength(int count)
         {
             if (Position + count > _buffer.Length)
             {
-                int nextSize = (_buffer.Length * 2) + count;
+                int nextSize = _buffer.Length * 2 + count;
                 Array.Resize(ref _buffer, nextSize);
             }
         }
@@ -175,14 +156,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Reserves a number of bytes from current position.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name = "count"></param>
         [Obsolete("Use Skip.")]
         public void Reserve(int count) => Skip(count);
 
         /// <summary>
         /// Skips a number of bytes from current position.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name = "count"></param>
         public void Skip(int count)
         {
             EnsureBufferLength(count);
@@ -193,7 +174,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Sets size variables back an amount.
         /// </summary>
-        /// <param name="count"></param>
+        /// <param name = "count"></param>
         internal void Remove(int count)
         {
             Position -= count;
@@ -201,18 +182,9 @@ namespace FishNet.Serializing
         }
 
         /// <summary>
-        /// Writes length. This method is used to make debugging easier.
-        /// </summary>
-        /// <param name="length"></param>
-        internal void WriteLength(int length)
-        {
-            WriteInt32(length);
-        }
-
-        /// <summary>
         /// Sends a packetId.
         /// </summary>
-        /// <param name="pid"></param>
+        /// <param name = "pid"></param>
         internal void WritePacketIdUnpacked(PacketId pid)
         {
             WriteUInt16Unpacked((ushort)pid);
@@ -271,14 +243,13 @@ namespace FishNet.Serializing
             _buffer[index] = (byte)(value >> 24);
         }
 
-
         [Obsolete("Use WriteUInt8Unpacked.")]
         public void WriteByte(byte value) => WriteUInt8Unpacked(value);
 
         /// <summary>
         /// Writes a byte.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteUInt8Unpacked(byte value)
         {
@@ -288,16 +259,15 @@ namespace FishNet.Serializing
             Length = Math.Max(Length, Position);
         }
 
-
         [Obsolete("Use WriteUInt8Array.")]
         public void WriteBytes(byte[] value, int offset, int count) => WriteUInt8Array(value, offset, count);
 
         /// <summary>
         /// Writes bytes.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
+        /// <param name = "value"></param>
+        /// <param name = "offset"></param>
+        /// <param name = "count"></param>
         public void WriteUInt8Array(byte[] value, int offset, int count)
         {
             EnsureBufferLength(count);
@@ -306,21 +276,20 @@ namespace FishNet.Serializing
             Length = Math.Max(Length, Position);
         }
 
-
         [Obsolete("Use WriteUInt8ArrayAndSize.")]
         public void WriteBytesAndSize(byte[] value, int offset, int count) => WriteUInt8ArrayAndSize(value, offset, count);
 
         /// <summary>
         /// Writes bytes and length of bytes.
         /// </summary>
-        /// <param name="value"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
+        /// <param name = "value"></param>
+        /// <param name = "offset"></param>
+        /// <param name = "count"></param>
         public void WriteUInt8ArrayAndSize(byte[] value, int offset, int count)
         {
             if (value == null)
             {
-                WriteInt32(Writer.UNSET_COLLECTION_SIZE_VALUE);
+                WriteInt32(UNSET_COLLECTION_SIZE_VALUE);
             }
             else
             {
@@ -329,21 +298,19 @@ namespace FishNet.Serializing
             }
         }
 
-
         [Obsolete("Use WriteUInt8ArrayAndSize.")]
         public void WriteBytesAndSize(byte[] value) => WriteUInt8ArrayAndSize(value);
 
         /// <summary>
         /// Writes all bytes in value and length of bytes.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteUInt8ArrayAndSize(byte[] value)
         {
-            int size = (value == null) ? 0 : value.Length;
+            int size = value == null ? 0 : value.Length;
             // buffer might be null, so we can't use .Length in that case
             WriteUInt8ArrayAndSize(value, 0, size);
         }
-
 
         [Obsolete("Use WriteInt8Unpacked.")]
         public void WriteSByte(sbyte value) => WriteInt8Unpacked(value);
@@ -357,7 +324,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a char.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteChar(char value)
         {
@@ -370,20 +337,19 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a boolean.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteBoolean(bool value)
         {
             EnsureBufferLength(1);
-            _buffer[Position++] = (value) ? (byte)1 : (byte)0;
+            _buffer[Position++] = value ? (byte)1 : (byte)0;
             Length = Math.Max(Length, Position);
         }
-
 
         /// <summary>
         /// Writes a uint16 unpacked.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteUInt16Unpacked(ushort value)
         {
             EnsureBufferLength(2);
@@ -395,36 +361,36 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a uint16.
         /// </summary>
-        /// <param name="value"></param>
-        //todo: should be using WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
+        /// <param name = "value"></param>
+        // todo: should be using WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
         [DefaultWriter]
         public void WriteUInt16(ushort value) => WriteUInt16Unpacked(value);
 
         /// <summary>
         /// Writes a int16 unpacked.
         /// </summary>
-        /// <param name="value"></param>
-        //todo: should be WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
+        /// <param name = "value"></param>
+        // todo: should be WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
         public void WriteInt16Unpacked(short value) => WriteUInt16Unpacked((ushort)value);
 
         /// <summary>
         /// Writes a int16.
         /// </summary>
-        /// <param name="value"></param>
-        //todo: should be WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
+        /// <param name = "value"></param>
+        // todo: should be WritePackedWhole but something relying on unpacked short/ushort is being written packed, corrupting packets.
         [DefaultWriter]
         public void WriteInt16(short value) => WriteUInt16Unpacked((ushort)value);
 
         /// <summary>
         /// Writes a int32.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteInt32Unpacked(int value) => WriteUInt32Unpacked((uint)value);
 
         /// <summary>
         /// Writes an int32.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteInt32(int value) => WriteSignedPackedWhole(value);
 
@@ -442,7 +408,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a uint32.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteUInt32Unpacked(uint value)
         {
             EnsureBufferLength(4);
@@ -453,14 +419,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a uint32.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteUInt32(uint value) => WriteUnsignedPackedWhole(value);
 
         /// <summary>
         /// Writes a uint64.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteUInt64Unpacked(ulong value)
         {
             EnsureBufferLength(8);
@@ -478,27 +444,27 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a uint64.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteUInt64(ulong value) => WriteUnsignedPackedWhole(value);
 
         /// <summary>
         /// Writes a int64.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteInt64Unpacked(long value) => WriteUInt64((ulong)value);
 
         /// <summary>
         /// Writes an int64.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteInt64(long value) => WriteSignedPackedWhole(value);
 
         /// <summary>
         /// Writes a single (float).
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteSingleUnpacked(float value)
         {
             EnsureBufferLength(4);
@@ -509,14 +475,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a single (float).
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteSingle(float value) => WriteSingleUnpacked(value);
 
         /// <summary>
         /// Writes a double.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteDoubleUnpacked(double value)
         {
             UIntDouble converter = new() { DoubleValue = value };
@@ -526,14 +492,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a double.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteDouble(double value) => WriteDoubleUnpacked(value);
 
         /// <summary>
         /// Writes a decimal.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteDecimalUnpacked(decimal value)
         {
             UIntDecimal converter = new() { DecimalValue = value };
@@ -544,56 +510,58 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a decimal.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteDecimal(decimal value) => WriteDecimalUnpacked(value);
 
         /// <summary>
         /// Writes a string.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteString(string value)
         {
             if (value == null)
             {
-                WriteInt32(Writer.UNSET_COLLECTION_SIZE_VALUE);
-                return;
-            }
-            else if (value.Length == 0)
-            {
-                WriteInt32(0);
+                WriteInt32(UNSET_COLLECTION_SIZE_VALUE);
                 return;
             }
 
-            /* Resize string buffer as needed. There's no harm in
-             * increasing buffer on writer side because sender will
-             * never intentionally inflict allocations on itself.
-             * Reader ensures string count cannot exceed received
-             * packet size. */
-            int size;
-            byte[] stringBuffer = WriterStatics.GetStringBuffer(value, out size);
-            WriteInt32(size);
-            WriteUInt8Array(stringBuffer, 0, size);
+            byte[] buffer = Strings.Buffer;
+            int length = value.ToBytes(ref buffer);
+
+            WriteInt32(length);
+
+            // Nothing to write.
+            if (length == 0)
+                return;
+
+            WriteUInt8Array(buffer, 0, length);
         }
 
         /// <summary>
         /// Writes a byte ArraySegment and it's size.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteArraySegmentAndSize(ArraySegment<byte> value) => WriteUInt8ArrayAndSize(value.Array, value.Offset, value.Count);
 
         /// <summary>
         /// Writes an ArraySegment without size.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteArraySegment(ArraySegment<byte> value) => WriteUInt8Array(value.Array, value.Offset, value.Count);
 
         /// <summary>
+        /// Writes AutoPackType.
+        /// </summary>
+        [DefaultWriter]
+        public void WriteAutoPackType(AutoPackType apt) => WriteUInt8Unpacked((byte)apt);
+        
+        /// <summary>
         /// Writes a Vector2.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteVector2Unpacked(Vector2 value)
         {
             WriteSingleUnpacked(value.x);
@@ -603,14 +571,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector2.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteVector2(Vector2 value) => WriteVector2Unpacked(value);
 
         /// <summary>
         /// Writes a Vector3
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteVector3Unpacked(Vector3 value)
         {
             WriteSingleUnpacked(value.x);
@@ -621,14 +589,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector3
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteVector3(Vector3 value) => WriteVector3Unpacked(value);
 
         /// <summary>
         /// Writes a Vector4.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteVector4Unpacked(Vector4 value)
         {
             WriteSingleUnpacked(value.x);
@@ -640,14 +608,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector4.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteVector4(Vector4 value) => WriteVector4Unpacked(value);
 
         /// <summary>
         /// Writes a Vector2Int.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteVector2IntUnpacked(Vector2Int value)
         {
             WriteInt32Unpacked(value.x);
@@ -657,7 +625,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector2Int.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteVector2Int(Vector2Int value)
         {
@@ -668,7 +636,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector3Int.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteVector3IntUnpacked(Vector3Int value)
         {
             WriteInt32Unpacked(value.x);
@@ -679,7 +647,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Vector3Int.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteVector3Int(Vector3Int value)
         {
@@ -691,7 +659,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Color.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteColorUnpacked(Color value)
         {
             WriteSingleUnpacked(value.r);
@@ -703,7 +671,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Color.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteColor(Color value)
         {
@@ -718,7 +686,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Color32.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteColor32(Color32 value)
         {
@@ -734,7 +702,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Quaternion.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteQuaternionUnpacked(Quaternion value)
         {
             WriteSingleUnpacked(value.x);
@@ -746,7 +714,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Quaternion.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteQuaternion64(Quaternion value)
         {
             ulong result = Quaternion64Compression.Compress(value);
@@ -756,25 +724,23 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Quaternion.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteQuaternion32(Quaternion value)
         {
-            uint result = Quaternion32Compression.Compress(value);
-            WriteUInt32Unpacked(result);
+            Quaternion32Compression.Compress(this, value);
         }
 
         /// <summary>
         /// Reads a Quaternion.
         /// </summary>
         /// <returns></returns>
-        internal void WriteQuaternion(Quaternion value, AutoPackType autoPackType)
+        public void WriteQuaternion(Quaternion value, AutoPackType autoPackType)
         {
             switch (autoPackType)
             {
                 case AutoPackType.Packed:
                     WriteQuaternion32(value);
-                    ;
                     break;
                 case AutoPackType.PackedLess:
                     WriteQuaternion64(value);
@@ -788,7 +754,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a rect.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteRectUnpacked(Rect value)
         {
             WriteSingleUnpacked(value.xMin);
@@ -800,14 +766,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a rect.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteRect(Rect value) => WriteRectUnpacked(value);
 
         /// <summary>
         /// Writes a plane.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WritePlaneUnpacked(Plane value)
         {
             WriteVector3Unpacked(value.normal);
@@ -817,14 +783,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a plane.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WritePlane(Plane value) => WritePlaneUnpacked(value);
 
         /// <summary>
         /// Writes a Ray.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteRayUnpacked(Ray value)
         {
             WriteVector3Unpacked(value.origin);
@@ -834,14 +800,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Ray.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteRay(Ray value) => WriteRayUnpacked(value);
 
         /// <summary>
         /// Writes a Ray2D.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteRay2DUnpacked(Ray2D value)
         {
             WriteVector2Unpacked(value.origin);
@@ -851,15 +817,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Ray2D.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteRay2D(Ray2D value) => WriteRay2DUnpacked(value);
-
 
         /// <summary>
         /// Writes a Matrix4x4.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteMatrix4x4Unpacked(Matrix4x4 value)
         {
             WriteSingleUnpacked(value.m00);
@@ -883,16 +848,16 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Matrix4x4.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteMatrix4x4(Matrix4x4 value) => WriteMatrix4x4Unpacked(value);
 
         /// <summary>
         /// Writes a Guid.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
-        public void WriteGuidAllocated(System.Guid value)
+        public void WriteGuidAllocated(Guid value)
         {
             byte[] data = value.ToByteArray();
             WriteUInt8Array(data, 0, data.Length);
@@ -901,36 +866,36 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a tick without packing.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteTickUnpacked(uint value) => WriteUInt32Unpacked(value);
 
         /// <summary>
         /// Writes a GameObject. GameObject must be spawned over the network already or be a prefab with a NetworkObject attached.
         /// </summary>
-        /// <param name="go"></param>
+        /// <param name = "go"></param>
         [DefaultWriter]
         public void WriteGameObject(GameObject go)
         {
-            //There needs to be a header to indicate if null, nob, or nb.
+            // There needs to be a header to indicate if null, nob, or nb.
             if (go == null)
             {
                 WriteUInt8Unpacked(0);
             }
             else
             {
-                //Try to write the NetworkObject first.
+                // Try to write the NetworkObject first.
                 if (go.TryGetComponent(out NetworkObject nob))
                 {
                     WriteUInt8Unpacked(1);
                     WriteNetworkObject(nob);
                 }
-                //If there was no nob try to write a NetworkBehaviour.
+                // If there was no nob try to write a NetworkBehaviour.
                 else if (go.TryGetComponent(out NetworkBehaviour nb))
                 {
                     WriteUInt8Unpacked(2);
                     WriteNetworkBehaviour(nb);
                 }
-                //Object cannot be serialized so write null.
+                // Object cannot be serialized so write null.
                 else
                 {
                     WriteUInt8Unpacked(0);
@@ -942,7 +907,7 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a Transform. Transform must be spawned over the network already or be a prefab with a NetworkObject attached.
         /// </summary>
-        /// <param name="t"></param>
+        /// <param name = "t"></param>
         [DefaultWriter]
         public void WriteTransform(Transform t)
         {
@@ -956,14 +921,14 @@ namespace FishNet.Serializing
                 WriteNetworkObject(nob);
             }
         }
-        
+
         /// <summary>
         /// Writes a NetworkObject.ObjectId.
         /// </summary>
-        /// <param name="nob"></param>
+        /// <param name = "nob"></param>
         public void WriteNetworkObjectId(NetworkObject nob)
         {
-            int id = (nob == null) ? NetworkObject.UNSET_OBJECTID_VALUE : nob.ObjectId;
+            int id = nob == null ? NetworkObject.UNSET_OBJECTID_VALUE : nob.ObjectId;
             WriteNetworkObjectId(id);
         }
 
@@ -975,22 +940,38 @@ namespace FishNet.Serializing
         {
             if (nob == null)
             {
-                WriteNetworkObjectId(NetworkObject.UNSET_OBJECTID_VALUE);
+                WriteNullReferenceId();
+                return;
+            }
+
+            bool spawned = nob.IsSpawned;
+
+            if (!spawned)
+            {
+                /* If not spawned and IsInitializedNested is true
+                 * we must send as a null reference rather than
+                 * the prefabId. Even though the nob might
+                 * be a prefab, it's being written as a child
+                 * in this case. */
+                if (nob.IsInitializedNested)
+                {
+                    WriteNullReferenceId();
+                    return;
+                }
+
+                WriteNetworkObjectId(nob.PrefabId);
             }
             else
             {
-                bool spawned = nob.IsSpawned;
-               
-                if (spawned)
-                    WriteNetworkObjectId(nob.ObjectId);
-                else
-                    WriteNetworkObjectId(nob.PrefabId);
-
-                /* Spawned is written after because it's only needed if nob
-                 * is not null. If it were written before it would also have
-                 * to be written when nob == null.*/
-                WriteBoolean(spawned);
+                WriteNetworkObjectId(nob.ObjectId);
             }
+
+            /* Spawned is written after because it's only needed if nob
+             * is not null. If it were written before it would also have
+             * to be written when nob == null.*/
+            WriteBoolean(spawned);
+
+            void WriteNullReferenceId() => WriteNetworkObjectId(NetworkObject.UNSET_OBJECTID_VALUE);
         }
 
         /// <summary>
@@ -1000,29 +981,29 @@ namespace FishNet.Serializing
         {
             WriteNetworkObjectId(nob.ObjectId);
             WriteUInt16(nob.SpawnableCollectionId);
-            WriteInt8Unpacked(nob.GetInitializeOrder());
+            WriteInt32(nob.GetInitializeOrder());
         }
 
         /// <summary>
         /// Writes a NetworkObject for a despawn message.
         /// </summary>
-        /// <param name="nob"></param>
-        /// <param name="dt"></param>
+        /// <param name = "nob"></param>
+        /// <param name = "dt"></param>
         internal void WriteNetworkObjectForDespawn(NetworkObject nob, DespawnType dt)
         {
             WriteNetworkObjectId(nob.ObjectId);
             WriteUInt8Unpacked((byte)dt);
         }
-        
+
         /// <summary>
         /// Writes an objectId.
         /// </summary>
         public void WriteNetworkObjectId(int objectId) => WriteSignedPackedWhole(objectId);
-        
+
         /// <summary>
         /// Writes a NetworkBehaviour.
         /// </summary>
-        /// <param name="nb"></param>
+        /// <param name = "nb"></param>
         [DefaultWriter]
         public void WriteNetworkBehaviour(NetworkBehaviour nb)
         {
@@ -1058,26 +1039,37 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a transport channel.
         /// </summary>
-        /// <param name="channel"></param>
+        /// <param name = "channel"></param>
         [DefaultWriter]
         public void WriteChannel(Channel channel) => WriteUInt8Unpacked((byte)channel);
 
         /// <summary>
         /// Writers a LayerMask.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         [DefaultWriter]
         public void WriteLayerMask(LayerMask value) => WriteSignedPackedWhole(value.value);
 
         /// <summary>
         /// Writes a NetworkConnection.
         /// </summary>
-        /// <param name="connection"></param>
+        /// <param name = "connection"></param>
         [DefaultWriter]
         public void WriteNetworkConnection(NetworkConnection connection)
         {
-            int value = (connection == null) ? NetworkConnection.UNSET_CLIENTID_VALUE : connection.ClientId;
+            int value = connection == null ? NetworkConnection.UNSET_CLIENTID_VALUE : connection.ClientId;
             WriteNetworkConnectionId(value);
+        }
+
+        /// <summary>
+        /// Writes TransformProperties.
+        /// </summary>
+        [DefaultWriter]
+        public void WriteTransformProperties(TransformProperties value)
+        {
+            WriteVector3(value.Position);
+            WriteQuaternion32(value.Rotation);
+            WriteVector3(value.Scale);
         }
 
         /// <summary>
@@ -1087,21 +1079,31 @@ namespace FishNet.Serializing
         public void WriteNetworkConnectionId(int id) => WriteSignedPackedWhole(id);
 
         /// <summary>
-        /// Writes a list.
+        /// Writes a dictionary.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        public void WriteList<T>(List<T> value)
+        public void WriteDictionary<TKey, TValue>(Dictionary<TKey, TValue> dict)
         {
-            if (value == null)
-                WriteList<T>(null, 0, 0);
+            if (dict == null)
+            {
+                WriteSignedPackedWhole(UNSET_COLLECTION_SIZE_VALUE);
+                return;
+            }
             else
-                WriteList(value, 0, value.Count);
+            {
+                WriteSignedPackedWhole(dict.Count);
+            }
+
+            foreach (KeyValuePair<TKey, TValue> item in dict)
+            {
+                Write(item.Key);
+                Write(item.Value);
+            }
         }
 
         /// <summary>
         /// Writes a state update packet.
         /// </summary>
-        /// <param name="tick"></param>
+        /// <param name = "tick"></param>
         internal void WriteStateUpdatePacket(uint lastPacketTick) => WriteTickUnpacked(lastPacketTick);
 
         #region Packed writers.
@@ -1118,97 +1120,27 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a packed whole number.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
         public void WriteSignedPackedWhole(long value) => WriteUnsignedPackedWhole(ZigZagEncode((ulong)value));
 
         /// <summary>
         /// Writes a packed whole number.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name = "value"></param>
+        /// <summary>
+        /// Writes a packed whole number.
+        /// </summary>
+        /// <param name = "value"> </param>
         public void WriteUnsignedPackedWhole(ulong value)
         {
-            if (value < 0x80UL)
+            EnsureBufferLength(9);
+            while (value > 127)
             {
-                EnsureBufferLength(1);
-                _buffer[Position++] = (byte)(value & 0x7F);
-            }
-            else if (value < 0x4000UL)
-            {
-                EnsureBufferLength(2);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)((value >> 7) & 0x7F);
-            }
-            else if (value < 0x200000UL)
-            {
-                EnsureBufferLength(3);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)((value >> 14) & 0x7F);
-            }
-            else if (value < 0x10000000UL)
-            {
-                EnsureBufferLength(4);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)((value >> 21) & 0x7F);
-            }
-            else if (value < 0x100000000UL)
-            {
-                EnsureBufferLength(5);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 21) & 0x7F));
-                _buffer[Position++] = (byte)((value >> 28) & 0x0F);
-            }
-            else if (value < 0x10000000000UL)
-            {
-                EnsureBufferLength(6);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 21) & 0x7F));
-                _buffer[Position++] = (byte)(0x10 | ((value >> 28) & 0x0F));
-                _buffer[Position++] = (byte)((value >> 32) & 0xFF);
-            }
-            else if (value < 0x1000000000000UL)
-            {
-                EnsureBufferLength(7);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 21) & 0x7F));
-                _buffer[Position++] = (byte)(0x20 | ((value >> 28) & 0x0F));
-                _buffer[Position++] = (byte)((value >> 32) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 40) & 0xFF);
-            }
-            else if (value < 0x100000000000000UL)
-            {
-                EnsureBufferLength(8);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 21) & 0x7F));
-                _buffer[Position++] = (byte)(0x30 | ((value >> 28) & 0x0F));
-                _buffer[Position++] = (byte)((value >> 32) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 40) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 48) & 0xFF);
-            }
-            else
-            {
-                EnsureBufferLength(9);
-                _buffer[Position++] = (byte)(0x80 | (value & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 7) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 14) & 0x7F));
-                _buffer[Position++] = (byte)(0x80 | ((value >> 21) & 0x7F));
-                _buffer[Position++] = (byte)(0x40 | ((value >> 28) & 0x0F));
-                _buffer[Position++] = (byte)((value >> 32) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 40) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 48) & 0xFF);
-                _buffer[Position++] = (byte)((value >> 56) & 0xFF);
+                _buffer[Position++] = (byte)((value & 0x7F) | 0x80);
+                value >>= 7;
             }
 
+            _buffer[Position++] = (byte)(value & 0x7F);
             Length = Math.Max(Length, Position);
         }
         #endregion
@@ -1217,19 +1149,19 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a list.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        /// <param name="offset">Offset to begin at.</param>
-        /// <param name="count">Entries to write.</param>
+        /// <param name = "value">Collection to write.</param>
+        /// <param name = "offset">Offset to begin at.</param>
+        /// <param name = "count">Entries to write.</param>
         public void WriteList<T>(List<T> value, int offset, int count)
         {
             if (value == null)
             {
-                WriteSignedPackedWhole(Writer.UNSET_COLLECTION_SIZE_VALUE);
+                WriteSignedPackedWhole(UNSET_COLLECTION_SIZE_VALUE);
             }
             else
             {
-                //Make sure values cannot cause out of bounds.
-                if ((offset + count > value.Count))
+                // Make sure values cannot cause out of bounds.
+                if (offset + count > value.Count)
                     count = 0;
 
                 WriteSignedPackedWhole(count);
@@ -1241,83 +1173,84 @@ namespace FishNet.Serializing
         /// <summary>
         /// Writes a list.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        /// <param name="offset">Offset to begin at.</param>
+        /// <param name = "value">Collection to write.</param>
+        /// <param name = "offset">Offset to begin at.</param>
         public void WriteList<T>(List<T> value, int offset)
         {
+            int count = value == null ? 0 : value.Count;
+            WriteList(value, offset, count - offset);
+        }
+
+        /// <summary>
+        /// Writes a list.
+        /// </summary>
+        /// <param name = "value">Collection to write.</param>
+        public void WriteList<T>(List<T> value)
+        {
+            int count = value == null ? 0 : value.Count;
+            WriteList(value, 0, count);
+        }
+
+        /// <summary>
+        /// Writes a collection.
+        /// </summary>
+        /// <param name = "value">Collection to write.</param>
+        public void WriteHashSet<T>(HashSet<T> value)
+        {
+            /* HashSet cannot be index iterated so
+             * there is no need for an offset/count
+             * overload. */
+
             if (value == null)
-                WriteList<T>(null, 0, 0);
-            else
-                WriteList(value, offset, value.Count - offset);
-        }
-
-        /// <summary>
-        /// Writes a reconcile.
-        /// </summary>
-        internal void WriteReconcile<T>(T data)
-        {
-            Write(data);
-        }
-
-        /// <summary>
-        /// Writes a replication to the server.
-        /// </summary>
-        internal void WriteReplicate<T>(RingBuffer<T> values, int offset) where T : IReplicateData
-        {
-            /* COUNT
-             *
-             * Each Entry:
-             * 0 if the same as previous.
-             * 1 if default. */
-            int collectionCount = values.Count;
-            //Replicate list will never be null, no need to write null check.
-            //Number of entries being written.
-            byte count = (byte)(collectionCount - offset);
-            WriteUInt8Unpacked(count);
-
-            for (int i = offset; i < collectionCount; i++)
             {
-                T v = values[i];
-                Write(v);
+                WriteSignedPackedWhole(UNSET_COLLECTION_SIZE_VALUE);
             }
-        }
-
-        internal void WriteReplicate<T>(BasicQueue<T> values, int redundancyCount, uint lastTick = 0) where T : IReplicateData
-        {
-            /* COUNT
-             *
-             * Each Entry:
-             * 0 if the same as previous.
-             * 1 if default. */
-            int collectionCount = values.Count;
-            //Replicate list will never be null, no need to write null check.
-            //Number of entries being written.
-            byte count = (byte)redundancyCount;
-            WriteUInt8Unpacked(count);
-
-            for (int i = (collectionCount - redundancyCount); i < collectionCount; i++)
+            else
             {
-                T v = values[i];
-                Write(v);
+                WriteSignedPackedWhole(value.Count);
+
+                foreach (T item in value)
+                    Write(item);
             }
         }
 
         /// <summary>
         /// Writes an array.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        /// <param name="offset">Offset to begin at.</param>
-        /// <param name="count">Entries to write.</param>
+        /// <param name = "value">Collection to write.</param>
+        public void WriteArray<T>(T[] value)
+        {
+            int count = value == null ? 0 : value.Length;
+            WriteArray(value, 0, count);
+        }
+
+        /// <summary>
+        /// Writes an array.
+        /// </summary>
+        /// <param name = "value">Collection to write.</param>
+        /// <param name = "offset">Offset to begin at.</param>
+        public void WriteArray<T>(T[] value, int offset)
+        {
+            int count = value == null ? 0 : value.Length;
+            WriteArray(value, offset, count - offset);
+        }
+
+        /// <summary>
+        /// Writes an array.
+        /// </summary>
+        /// <param name = "value">Collection to write.</param>
+        /// <param name = "offset">Offset to begin at.</param>
+        /// <param name = "count">Entries to write.</param>
         public void WriteArray<T>(T[] value, int offset, int count)
         {
             if (value == null)
             {
-                WriteSignedPackedWhole(Writer.UNSET_COLLECTION_SIZE_VALUE);
+                WriteSignedPackedWhole(UNSET_COLLECTION_SIZE_VALUE);
             }
             else
             {
-                //If theres no values, or offset exceeds count then write 0 for count.
-                if (value.Length == 0 || (offset >= count))
+                // If theres no values, or offset exceeds count then write 0 for count.
+                if (value.Length == 0 || offset >= count)
                 {
                     WriteSignedPackedWhole(0);
                 }
@@ -1331,30 +1264,58 @@ namespace FishNet.Serializing
         }
 
         /// <summary>
-        /// Writes an array.
+        /// Writes a reconcile.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        /// <param name="offset">Offset to begin at.</param>
-        public void WriteArray<T>(T[] value, int offset)
+        internal void WriteReconcile<T>(T data)
         {
-            if (value == null)
-                WriteArray<T>(null, 0, 0);
-            else
-                WriteArray(value, offset, value.Length - offset);
+            Write(data);
         }
 
         /// <summary>
-        /// Writes an array.
+        /// Writes a replication to the server.
         /// </summary>
-        /// <param name="value">Collection to write.</param>
-        public void WriteArray<T>(T[] value)
+        internal void WriteReplicate<T>(RingBuffer<ReplicateDataContainer<T>> values, int offset) where T : IReplicateData, new()
         {
-            if (value == null)
-                WriteArray<T>(null, 0, 0);
-            else
-                WriteArray(value, 0, value.Length);
+            /* COUNT
+             *
+             * Each Entry:
+             * 0 if the same as previous.
+             * 1 if default. */
+            int collectionCount = values.Count;
+            // Replicate list will never be null, no need to write null check.
+            // Number of entries being written.
+            byte count = (byte)(collectionCount - offset);
+            WriteUInt8Unpacked(count);
+
+            for (int i = offset; i < collectionCount; i++)
+                WriteReplicateDataContainer<T>(values[i]);
         }
 
+        internal void WriteReplicate<T>(BasicQueue<ReplicateDataContainer<T>> values, int redundancyCount) where T : IReplicateData, new()
+        {
+            /* COUNT
+             *
+             * Each Entry:
+             * 0 if the same as previous.
+             * 1 if default. */
+            int collectionCount = values.Count;
+            // Replicate list will never be null, no need to write null check.
+            // Number of entries being written.
+            byte count = (byte)redundancyCount;
+            WriteUInt8Unpacked(count);
+
+            for (int i = collectionCount - redundancyCount; i < collectionCount; i++)
+                WriteReplicateDataContainer<T>(values[i]);
+        }
+
+        /// <summary>
+        /// Reads a ReplicateData and applies tick and channel.
+        /// </summary>
+        private void WriteReplicateDataContainer<T>(ReplicateDataContainer<T> value) where T : IReplicateData, new()
+        {
+            Write<T>(value.Data);
+            WriteChannel(value.Channel);
+        }
 
         /// <summary>
         /// Writes any supported type using packing.

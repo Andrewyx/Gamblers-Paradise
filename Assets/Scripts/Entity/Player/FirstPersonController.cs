@@ -148,16 +148,16 @@ namespace Entity.Player
                 gameObject.GetComponent<FirstPersonController>().enabled = false;
                 playerCameraObject.SetActive(false);
             }
-            // else
-            // {
-            //     if (TryGetComponent(out PlayerWeapon playerWeapon))
-            //     {
-            //         playerWeapon.InitializeWeapons(playerCamera.transform);
-            //         gameObject.layer = playerSelfLayer;
-            //         foreach (Transform child in transform)
-            //             child.gameObject.layer = playerSelfLayer;
-            //     }
-            // }
+            else
+            {
+                if (TryGetComponent(out PlayerWeapon playerWeapon))
+                {
+                    playerWeapon.InitializeWeapons(playerCamera.transform);
+                    gameObject.layer = playerSelfLayer;
+                    foreach (Transform child in transform)
+                        child.gameObject.layer = playerSelfLayer;
+                }
+            }
         }
 
 

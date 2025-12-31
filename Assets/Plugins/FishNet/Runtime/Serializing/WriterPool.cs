@@ -9,12 +9,15 @@ namespace FishNet.Serializing
     /// <summary>
     /// Writer which is reused to save on garbage collection and performance.
     /// </summary>
-    public sealed class PooledWriter : Writer, IResettable
+    public sealed class PooledWriter : Writer
     {
         public void Store() => WriterPool.Store(this);
         public void StoreLength() => WriterPool.StoreLength(this);
-        
-        public void ResetState() => Store();
+
+        [Obsolete("Use Clear instead.")]
+        public void ResetState() => Clear();
+
+        [Obsolete("This does not function.")]
         public void InitializeState() { }
     }
 
@@ -50,12 +53,12 @@ namespace FishNet.Serializing
             if (!_pool.TryPop(out result))
                 result = new();
 
-            result.Reset(networkManager);
+            result.Clear(networkManager);
             return result;
         }
+
         /// Gets a writer from the pool.
         /// </summary>
-        
         public static PooledWriter Retrieve()
         {
             return Retrieve(null);
@@ -64,17 +67,16 @@ namespace FishNet.Serializing
         /// <summary>
         /// Gets the next writer in the pool of minimum length.
         /// </summary>
-        /// <param name="length">Minimum length the writer buffer must be.</param>
-        
+        /// <param name = "length">Minimum length the writer buffer must be.</param>
         public static PooledWriter Retrieve(int length)
         {
             return Retrieve(null, length);
         }
+
         /// <summary>
         /// Gets the next writer in the pool of minimum length.
         /// </summary>
-        /// <param name="length">Minimum length the writer buffer must be.</param>
-        
+        /// <param name = "length">Minimum length the writer buffer must be.</param>
         public static PooledWriter Retrieve(NetworkManager networkManager, int length)
         {
             /* The index returned will be for writers which have
@@ -85,15 +87,15 @@ namespace FishNet.Serializing
             int index = GetDictionaryIndex(length);
             Stack<PooledWriter> stack;
             PooledWriter result;
-            //There is already one pooled.
+            // There is already one pooled.
             if (_lengthPool.TryGetValue(index, out stack) && stack.TryPop(out result))
             {
-                result.Reset(networkManager);
+                result.Clear(networkManager);
             }
-            //Not pooled yet or failed to pop.
+            // Not pooled yet or failed to pop.
             else
             {
-                //Get any ol' writer.
+                // Get any ol' writer.
                 result = Retrieve(networkManager);
                 /* Ensure length to fill it's bracket.
                  * Increase index by 1 since 0 index would
@@ -142,6 +144,7 @@ namespace FishNet.Serializing
                 writer = null;
             }
         }
+
         #region Dictionary indexes.
         /// <summary>
         /// Gets which index to use for length when retrieving a writer.
@@ -149,11 +152,11 @@ namespace FishNet.Serializing
         private static int GetDictionaryIndex(int length)
         {
             /* The index returned will be for writers which have
-            * length as a minimum capacity.
-            * EG: if length is 1200 / 1000 (length_bracket) result
-            * will be index 1. Index 0 will be up to 1000, while
-            * index 1 will be up to 2000. So to accomodate 1200
-            * length index 1 must be used as 0 has a maximum of 1000. */
+             * length as a minimum capacity.
+             * EG: if length is 1200 / 1000 (length_bracket) result
+             * will be index 1. Index 0 will be up to 1000, while
+             * index 1 will be up to 2000. So to accomodate 1200
+             * length index 1 must be used as 0 has a maximum of 1000. */
 
             /* Examples if length_bracket is 1000, using floor:
              * 800 / 1000 = 0.
@@ -164,7 +167,7 @@ namespace FishNet.Serializing
             if (index > 0 && length % LENGTH_BRACKET == 0)
                 index--;
 
-            //UnityEngine.Debug.Log($"Returning length {length} from index {index}");
+            // UnityEngine.Debug.Log($"Returning length {length} from index {index}");
             return index;
         }
 
@@ -185,7 +188,7 @@ namespace FishNet.Serializing
 
             /* Since capacity is set to minimum of length_bracket
              * capacity / length_bracket will always be at least 1.
-             * 
+             *
              * Here are some result examples using floor:
              * 1000 / 1000 = 1.
              * 1200 / 1000 = 1.
@@ -199,10 +202,9 @@ namespace FishNet.Serializing
              * Just as 2000-2999 would go into 1. */
             index--;
 
-            //UnityEngine.Debug.Log($"Storing capacity {capacity} at index {index}");
+            // UnityEngine.Debug.Log($"Storing capacity {capacity} at index {index}");
             return index;
         }
         #endregion
-
     }
 }
