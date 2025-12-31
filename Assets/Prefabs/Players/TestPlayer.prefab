@@ -219,6 +219,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <IsNested>k__BackingField: 0
+  WasActiveDuringEdit: 0
+  WasActiveDuringEdit_Set1: 1
   <ComponentIndex>k__BackingField: 0
   <PredictedSpawn>k__BackingField: {fileID: 0}
   <PredictedOwner>k__BackingField: {fileID: 0}
@@ -227,6 +229,7 @@ MonoBehaviour:
   - {fileID: 745311387352384819}
   - {fileID: 1279935463766413883}
   - {fileID: 5597593786472515176}
+  - {fileID: 1405372565794621366}
   - {fileID: 5926164592054410451}
   - {fileID: 2922149262449377041}
   - {fileID: 4397950811678420031}
@@ -240,7 +243,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedValusSet: 1
+  _initializedTimestamp: -8584344465409717969
   NetworkObserver: {fileID: 0}
   _enablePrediction: 0
   _predictionType: 0
@@ -255,14 +258,15 @@ MonoBehaviour:
   _spectatorInterpolation: 2
   _enableTeleport: 0
   _teleportThreshold: 1
-  <PrefabId>k__BackingField: 2
+  <PrefabId>k__BackingField: 0
   <SpawnableCollectionId>k__BackingField: 0
-  <AssetPathHash>k__BackingField: 1703293538118954266
-  <SceneId>k__BackingField: 0
+  <AssetPathHash>k__BackingField: 779990065998739053
+  SceneId: 0
   SerializedTransformProperties:
     Position: {x: -0.33117485, y: 2.1, z: -0.9157162}
     Rotation: {x: 0, y: 0, z: 0, w: 1}
-    LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+    Scale: {x: 0.25, y: 0.25, z: 0.25}
+    IsValid: 1
 --- !u!114 &745311387352384819
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,12 +282,13 @@ MonoBehaviour:
   _componentIndexCache: 1
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
-  _componentConfiguration: 0
+  _componentConfiguration: 2
   _synchronizeParent: 0
   _packing:
     Position: 1
     Rotation: 1
     Scale: 0
+  _useScaledTime: 1
   _interpolation: 2
   _extrapolation: 2
   _enableTeleport: 0
@@ -292,6 +297,7 @@ MonoBehaviour:
   _sendToOwner: 1
   _interval: 1
   _synchronizePosition: 1
+  _positionSensitivity: 0.001
   _positionSnapping:
     X: 0
     Y: 0
@@ -302,6 +308,7 @@ MonoBehaviour:
     Y: 0
     Z: 0
   _synchronizeScale: 1
+  _scaleSensitivity: 0.001
   _scaleSnapping:
     X: 0
     Y: 0
@@ -711,7 +718,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aa65bb62433aee4280fc597a909b595, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 4
+  _componentIndexCache: 5
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
   damage: 5
@@ -1325,7 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e2f58e1d2cf4af45a98c355e349eff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 5
+  _componentIndexCache: 6
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
   damage: 100
@@ -1550,7 +1557,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78d01829e322d5947a00c82b2f68cda7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 6
+  _componentIndexCache: 7
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
   damage: 20
@@ -1850,9 +1857,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a4779731f94474582268e20e5b2ab3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _componentIndexCache: 255
+  _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2107025993139506500}
-  _networkObjectCache: {fileID: 0}
+  _networkObjectCache: {fileID: 2107025993139506500}
   projectilePrefab: {fileID: 1814506945658592, guid: db8d6ebe0a80601458a02ea82de28877, type: 3}
   projectileSpeed: 1
   projectileRange: 5

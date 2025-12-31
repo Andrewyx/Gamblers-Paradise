@@ -2,8 +2,11 @@ using System.Runtime.CompilerServices;
 
 namespace FishNet.Serializing
 {
+    /// <summary>
+    /// This is for internal use and may change at any time.
+    /// </summary>
     [System.Flags]
-    internal enum DeltaVector2Type : byte
+    public enum DeltaVector2Type : byte
     {
         /// <summary>
         /// This is unused.
@@ -40,11 +43,14 @@ namespace FishNet.Serializing
         /// <summary>
         /// Contains Y as 4 bytes.
         /// </summary>
-        YNextIsLarger = 128,
+        YNextIsLarger = 128
     }
 
+    /// <summary>
+    /// This is for internal use and may change at any time.
+    /// </summary>
     [System.Flags]
-    internal enum DeltaVector3Type : ushort
+    public enum DeltaVector3Type : ushort
     {
         /// <summary>
         /// This is unused.
@@ -81,9 +87,9 @@ namespace FishNet.Serializing
         /// <summary>
         /// Contains Y as 2 bytes.
         /// </summary>
-        YInt32 = 128,
+        YInt32 = 128
     }
-    
+
     [System.Flags]
     internal enum DeltaWholeType : byte
     {
@@ -115,11 +121,14 @@ namespace FishNet.Serializing
         /// When set this indicates the new value is larger than the previous.
         /// When not set, indicates new value is smaller than the previous.
         /// </summary>
-        NextValueIsLarger = 32,
+        NextValueIsLarger = 32
     }
-    
+
+    /// <summary>
+    /// This is for internal use and may change at any time.
+    /// </summary>
     [System.Flags]
-    internal enum UDeltaPrecisionType : byte
+    public enum UDeltaPrecisionType : byte
     {
         /// <summary>
         /// Indicates there is no compression. This can also be used to initialize the enum.
@@ -149,19 +158,18 @@ namespace FishNet.Serializing
         /// When set this indicates the new value is larger than the previous.
         /// When not set, indicates new value is smaller than the previous.
         /// </summary>
-        NextValueIsLarger = 128,
+        NextValueIsLarger = 128
     }
- 
-    internal static class DeltaTypeExtensions
+
+    /// <summary>
+    /// This is for internal use and may change at any time.
+    /// </summary>
+    public static class DeltaTypeExtensions
     {
         public static bool FastContains(this UDeltaPrecisionType whole, UDeltaPrecisionType part) => (whole & part) == part;
-        
         public static bool FastContains(this UDeltaPrecisionType whole, UDeltaPrecisionType part, int shift) => FastContains((int)whole, (int)part, shift);
-
         public static bool FastContains(this DeltaVector3Type whole, DeltaVector3Type part) => (whole & part) == part;
-        
         public static bool FastContains(this DeltaVector3Type whole, DeltaVector3Type part, int shift) => FastContains((int)whole, (int)part, shift);
-        
         public static bool FastContains(this DeltaVector2Type whole, DeltaVector2Type part) => (whole & part) == part;
 
         private static bool FastContains(int whole, int part, int shift)
@@ -170,5 +178,4 @@ namespace FishNet.Serializing
             return (whole & intPart) == intPart;
         }
     }
-
 }
