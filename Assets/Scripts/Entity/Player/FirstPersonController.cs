@@ -903,6 +903,5 @@ namespace Entity.Player
         }
 
     }
-}
 #endif
-    
+}
