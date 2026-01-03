@@ -320,7 +320,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539911324021046629}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2af206a50ebe8454aac1675d0d153c2a, type: 3}
   m_Name: 
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1539911324021046629}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4667c26e6637bc4090254969e653633, type: 3}
   m_Name: 
@@ -349,6 +349,7 @@ MonoBehaviour:
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
   maxHealth: 100
+  _currentHealth: 0
 --- !u!1 &2369269890772988347
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,7 +725,8 @@ MonoBehaviour:
   damage: 5
   weaponHitLayers:
     serializedVersion: 2
-    m_Bits: 257
+    m_Bits: 321
+  _cameraTransform: {fileID: 2046811802779789983}
   maxRange: 20
 --- !u!1 &3524529499934827795
 GameObject:
@@ -1338,7 +1340,8 @@ MonoBehaviour:
   damage: 100
   weaponHitLayers:
     serializedVersion: 2
-    m_Bits: 257
+    m_Bits: 321
+  _cameraTransform: {fileID: 2046811802779789983}
   maxRange: 20
 --- !u!1 &6155173306325436734
 GameObject:
@@ -1563,7 +1566,8 @@ MonoBehaviour:
   damage: 20
   weaponHitLayers:
     serializedVersion: 2
-    m_Bits: 257
+    m_Bits: 321
+  _cameraTransform: {fileID: 2046811802779789983}
   maxRange: 20
 --- !u!1 &6682945285668351483
 GameObject:
@@ -1860,9 +1864,9 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
-  projectilePrefab: {fileID: 1814506945658592, guid: db8d6ebe0a80601458a02ea82de28877, type: 3}
-  projectileSpeed: 1
-  projectileRange: 5
+  projectilePrefab: {fileID: 6105728783435613029, guid: 1c4cf8468b55f31449fff0414301b018, type: 3}
+  projectileSpeed: 10
+  projectileRange: 100
   projectileOrigin: {fileID: 3829062204602428729}
 --- !u!1001 &4663077402416818025
 PrefabInstance:

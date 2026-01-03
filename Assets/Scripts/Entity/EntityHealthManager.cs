@@ -5,9 +5,9 @@ namespace Entity
 {
     public class EntityHealthManager : NetworkBehaviour
     {
-        [SerializeField] private int maxHealth = 100;
+        [SerializeField] private int maxHealth = 1;
 
-        private int _currentHealth;
+        [SerializeField] private int _currentHealth;
 
         public override void OnStartClient()
         {
@@ -20,10 +20,12 @@ namespace Entity
             }
             _currentHealth = maxHealth;
         }
+        
+        [ServerRpc(RequireOwnership = false)]
         public void TakeDamage(int damage)
         {
             _currentHealth -= damage;
-            Debug.Log("Player Health: " + _currentHealth);
+            Debug.Log("Entity Health: " + _currentHealth);
             if (_currentHealth <= 0)
             {
                 Die();
@@ -32,6 +34,7 @@ namespace Entity
         private void Die()
         {
             Debug.Log("Played died");
+            Destroy(gameObject);
         }
     }
 }
