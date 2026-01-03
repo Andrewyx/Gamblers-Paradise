@@ -1864,9 +1864,9 @@ MonoBehaviour:
   _componentIndexCache: 4
   _addedNetworkObject: {fileID: 2107025993139506500}
   _networkObjectCache: {fileID: 2107025993139506500}
-  projectilePrefab: {fileID: 1814506945658592, guid: db8d6ebe0a80601458a02ea82de28877, type: 3}
-  projectileSpeed: 1
-  projectileRange: 5
+  projectilePrefab: {fileID: 6105728783435613029, guid: 1c4cf8468b55f31449fff0414301b018, type: 3}
+  projectileSpeed: 10
+  projectileRange: 100
   projectileOrigin: {fileID: 3829062204602428729}
 --- !u!1001 &4663077402416818025
 PrefabInstance:

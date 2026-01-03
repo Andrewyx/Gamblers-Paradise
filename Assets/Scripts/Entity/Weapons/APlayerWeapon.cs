@@ -12,11 +12,6 @@ namespace Entity.Weapons
 
         public float maxRange = 20f;
 
-        // private void Awake()
-        // {
-        //     _cameraTransform = Camera.main.transform;
-        // }
-
         public void Fire()
         {
             AnimateWeapon();
