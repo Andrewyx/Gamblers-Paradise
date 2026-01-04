@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 745311387352384819}
   - component: {fileID: 1279935463766413883}
   - component: {fileID: 5597593786472515176}
+  - component: {fileID: 5891409870954115581}
   m_Layer: 8
   m_Name: TestPlayer
   m_TagString: Player
@@ -229,7 +230,7 @@ MonoBehaviour:
   - {fileID: 745311387352384819}
   - {fileID: 1279935463766413883}
   - {fileID: 5597593786472515176}
-  - {fileID: 1405372565794621366}
+  - {fileID: 5891409870954115581}
   - {fileID: 5926164592054410451}
   - {fileID: 2922149262449377041}
   - {fileID: 4397950811678420031}
@@ -243,7 +244,7 @@ MonoBehaviour:
   _initializeOrder: 0
   _preventDespawnOnDisconnect: 0
   _defaultDespawnType: 0
-  _initializedTimestamp: -8584344465409717969
+  _initializedTimestamp: -8584341179219193650
   NetworkObserver: {fileID: 0}
   _enablePrediction: 0
   _predictionType: 0
@@ -350,6 +351,27 @@ MonoBehaviour:
   _networkObjectCache: {fileID: 2107025993139506500}
   maxHealth: 100
   _currentHealth: 0
+--- !u!114 &5891409870954115581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1539911324021046629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4779731f94474582268e20e5b2ab3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _componentIndexCache: 4
+  _addedNetworkObject: {fileID: 2107025993139506500}
+  _networkObjectCache: {fileID: 2107025993139506500}
+  projectilePrefab: {fileID: 6105728783435613029, guid: 1c4cf8468b55f31449fff0414301b018, type: 3}
+  projectileForce: 20
+  projectileOrigin: {fileID: 3829062204602428729}
+  projectileLifetime: 5
+  fireRate: 600
+  bulletSpread: 0.05
 --- !u!1 &2369269890772988347
 GameObject:
   m_ObjectHideFlags: 0
@@ -1825,7 +1847,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8117895360455684270}
-  - component: {fileID: 1405372565794621366}
   m_Layer: 8
   m_Name: Joint
   m_TagString: Untagged
@@ -1849,25 +1870,6 @@ Transform:
   - {fileID: 2046811802779789983}
   m_Father: {fileID: 7211510119651765332}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1405372565794621366
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8856083095701196553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a4779731f94474582268e20e5b2ab3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _componentIndexCache: 4
-  _addedNetworkObject: {fileID: 2107025993139506500}
-  _networkObjectCache: {fileID: 2107025993139506500}
-  projectilePrefab: {fileID: 6105728783435613029, guid: 1c4cf8468b55f31449fff0414301b018, type: 3}
-  projectileSpeed: 10
-  projectileRange: 100
-  projectileOrigin: {fileID: 3829062204602428729}
 --- !u!1001 &4663077402416818025
 PrefabInstance:
   m_ObjectHideFlags: 0

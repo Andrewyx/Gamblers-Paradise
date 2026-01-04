@@ -15,13 +15,11 @@ namespace Entity.Weapons
         public void Fire()
         {
             AnimateWeapon();
-            Debug.DrawLine(_cameraTransform.position, _cameraTransform.forward * maxRange, Color.green, duration: 0.5f, depthTest: true);
+            Debug.DrawLine(_cameraTransform.position, _cameraTransform.forward * maxRange, Color.green, duration: 0.5f,
+                depthTest: true);
             if (!Physics.Raycast(_cameraTransform.position, _cameraTransform.forward, out RaycastHit hit, maxRange,
                     weaponHitLayers))
-            {
-                Debug.Log("No hit");
                 return;
-            }
             if (hit.transform.TryGetComponent(out EntityHealthManager health))
             {
                 health.TakeDamage(damage);
@@ -32,5 +30,3 @@ namespace Entity.Weapons
         public abstract void AnimateWeapon();
     }
 }
-
-
