@@ -1,70 +1,85 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using FishNet;
 using FishNet.Object;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Entity.Projectiles
 {
     public class ProjectileManager : NetworkBehaviour
     {
         [SerializeField] private GameObject projectilePrefab;
-        [SerializeField] private float projectileSpeed;
-        [SerializeField] private float projectileRange;
+        [SerializeField] private float projectileForce;
         [SerializeField] private Transform projectileOrigin;
-        private List<Projectile> _projectiles = new List<Projectile>();
+        [SerializeField] private float projectileLifetime;
+        [Header("FireRate (RPM)")]
+        [SerializeField] private int fireRate;
+
+        [Header("Bullet Spread")]
+        [SerializeField] private float bulletSpread = 1f;
+
+        private float lastFireTime;
+        private List<Projectile> _projectiles = new();
+
+        private void Start()
+        {
+            lastFireTime = 60f / fireRate;
+        }
 
         private void Update()
         {
-            for (int i = _projectiles.Count - 1; i >= 0; i--)
+            for (int i = 0; i < _projectiles.Count; i++)
             {
-                Projectile projectile = _projectiles[i];
-                Vector3 prevPosition = projectile.projectileTransform.position;
-                projectile.projectileTransform.position += projectile.direction * Time.deltaTime * projectileSpeed;
-                float distance = Vector3.Distance(prevPosition, projectile.projectileTransform.position);
-                projectile.rangeMeters -= distance;
-                if (projectile.rangeMeters <= 0)
+                _projectiles[i].ProjectileLifetime -= Time.deltaTime;
+                if (_projectiles[i].ProjectileLifetime <= 0)
                 {
-                    Destroy(projectile.reference);
-                    _projectiles.RemoveAt(i);
+                    _projectiles.Remove(_projectiles[i]);
+                    InstanceFinder.ServerManager.Despawn(_projectiles[i].ReferencedGameObject);
                 }
             }
 
             if (!IsOwner) return;
-
-            if (Input.GetKeyDown(KeyCode.Mouse0))
+            
+            lastFireTime += Time.deltaTime;
+            if (Input.GetKey(KeyCode.Mouse0) && lastFireTime >= 60f / fireRate )
                 FireProjectile();
         }
 
         private void FireProjectile()
         {
+            lastFireTime = 0;
             Vector3 spawnPosition = projectileOrigin.position;
             Vector3 direction = projectileOrigin.forward;
 
             SpawnProjectileLocal(spawnPosition, direction);
-            SpawnProjectile(spawnPosition, direction, TimeManager.Tick);
+            // SpawnProjectile(spawnPosition, direction, TimeManager.Tick);
         }
 
         private void SpawnProjectileLocal(Vector3 spawnPosition, Vector3 direction)
         {
             GameObject projectile = Instantiate(projectilePrefab, spawnPosition, Quaternion.identity);
+            Vector3 spreadOffset = Random.insideUnitSphere * bulletSpread;
             _projectiles.Add(new Projectile()
             {
-                projectileTransform = projectile.transform, direction = direction, reference = projectile,
-                rangeMeters = projectileRange
+                ProjectileLifetime = projectileLifetime, ReferencedGameObject = projectile
             });
+            InstanceFinder.ServerManager.Spawn(projectile);
+            projectile.GetComponent<Rigidbody>().AddForce((direction + spreadOffset).normalized * projectileForce, ForceMode.Impulse);
         }
 
-        [ServerRpc]
-        private void SpawnProjectile(Vector3 startPosition, Vector3 direction, uint startTick)
-        {
-            SpawnProjectileObserver(startPosition, direction, startTick);
-        }
-
-        [ObserversRpc(ExcludeOwner = true)]
-        private void SpawnProjectileObserver(Vector3 startPosition, Vector3 direction, uint startTick)
-        {
-            float timeDiff = (float)(TimeManager.Tick - startTick) / TimeManager.TickRate;
-            Vector3 compensatedPosition = startPosition + direction * (timeDiff * projectileSpeed);
-            SpawnProjectileLocal(compensatedPosition, direction);
-        }
+        // [ServerRpc]
+        // private void SpawnProjectile(Vector3 startPosition, Vector3 direction, uint startTick)
+        // {
+        //     SpawnProjectileObserver(startPosition, direction, startTick);
+        // }
+        //
+        // [ObserversRpc(ExcludeOwner = true)]
+        // private void SpawnProjectileObserver(Vector3 startPosition, Vector3 direction, uint startTick)
+        // {
+        //     float timeDiff = (float)(TimeManager.Tick - startTick) / TimeManager.TickRate;
+        //     Vector3 compensatedPosition = startPosition + direction * (timeDiff * projectileSpeed);
+        //     SpawnProjectileLocal(compensatedPosition, direction);
+        // }
     }
 }
